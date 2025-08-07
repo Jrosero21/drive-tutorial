@@ -1,12 +1,15 @@
-import { type Config } from "drizzle-kit";
+// drizzle.config.ts
+import "dotenv/config";
+import { defineConfig } from "drizzle-kit";
 
-import { env } from "~/env";
-
-export default {
+export default defineConfig({
+  // 1) Where your Drizzle schema lives:
   schema: "./src/server/db/schema.ts",
-  dialect: "sqlite",
-  dbCredentials: {
-    url: env.DATABASE_URL,
-  },
-  tablesFilter: ["drive-tutorial_*"],
-} satisfies Config;
+
+  // 2) Use the SingleStore dialect:
+  dialect: "singlestore",
+
+
+  // 4) (Optional) only apply tables matching your prefix
+  tablesFilter: ["drive_tutorial_*"],
+});
