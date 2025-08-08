@@ -48,5 +48,8 @@ const parentsPromise = getAllParents(parsedFolderId);
 
     const [folders, files, parents] = await Promise.all([foldersPromise, filesPromise, parentsPromise]);
 
-    return <DriveContents files={files} folders={folders} parents={parents} />
+    return <DriveContents 
+    files={files} 
+    folders={folders} 
+    parents={parents} />
 }

@@ -1,23 +1,44 @@
 name: CI
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: npm install -g pnpm && pnpm install
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      - name: Copy .env.example files
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # If you keep .env.example files in the repo, copy them to .env for CI
+      - name: Copy .env.example → .env
         shell: bash
-        run: find . -type f -name ".env.example" -exec sh -c 'cp "$1" "${1%.*}"' _ {} \;
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' f; do
+            cp "$f" "${f%.*}"
+          done < <(find . -type f -name ".env.example" -print0)
 
-      - name: Typecheck
-        run: pnpm typecheck
+      # Load env vars for typechecking via dotenvx
+      - name: Typecheck (with env loaded)
+        run: pnpm dlx dotenvx@latest run -f .env -- pnpm typecheck
 
-      - name: Lint
-        run: pnpm lint
+      # Load env vars for lint as well (env.js may run during lint)
+      - name: Lint (with env loaded)
+        run: pnpm dlx dotenvx@latest run -f .env -- pnpm lint
