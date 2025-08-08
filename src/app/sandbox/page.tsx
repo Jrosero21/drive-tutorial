@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 import { mockFolders, mockFiles } from "~/lib/mock-data";
-import { files, folders } from "~/server/db/schema";
+import { files, folders_table } from "~/server/db/schema";
 
 export default function SandboxPage() {
   return (
@@ -12,7 +12,7 @@ export default function SandboxPage() {
 
   console.log("sup nerds");
 
- const folderInsert = await db.insert(folders).values(
+ const folderInsert = await db.insert(folders_table).values(
     mockFolders.map((folder, i) => ({
       id:     i + 1,
       name:   folder.name,
