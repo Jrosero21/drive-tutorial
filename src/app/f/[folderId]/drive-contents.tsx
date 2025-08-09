@@ -1,7 +1,7 @@
 "use client";
 
 import { Upload, ChevronRight } from "lucide-react";
-import { FileRow, FolderRow } from "./file-row";
+import { FileRow, FolderRow } from "../../file-row";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -15,6 +15,8 @@ export default function GoogleDriveClone(props: {
   files: (typeof files_table.$inferSelect)[];
   folders: (typeof folders_table.$inferSelect)[];
   parents: (typeof folders_table.$inferSelect)[];
+
+  currentFolderId: number;
 }) {
 
   const navigate = useRouter();
@@ -68,7 +70,11 @@ export default function GoogleDriveClone(props: {
         <UploadButton endpoint="imageUploader" 
         onClientUploadComplete={() => {
         navigate.refresh();
-        }} />
+        }}
+        input={{
+          folderId: props.currentFolderId,
+        }} 
+        />
       </div>
     </div>
   );
